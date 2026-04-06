@@ -1,4 +1,5 @@
-Dynamic Requirements Loader (Pure Python)
+# PYIMPORT
+A Dynamic Requirements Loader (Pure Python)
 
 Módulo ligero para instalar e importar dependencias dinámicamente a partir de un archivo tipo requirements.txt, sin depender de librerías externas.
 

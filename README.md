@@ -1,41 +1,58 @@
-# PYIMPORT
-A Dynamic Requirements Loader (Pure Python)
+PYMPORTER — Dynamic Requirements Loader (Pure Python)
 
-Módulo ligero para instalar e importar dependencias dinámicamente a partir de un archivo tipo requirements.txt, sin depender de librerías externas.
+Descripción
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Este módulo permite instalar e importar automáticamente las dependencias
+de un proyecto a partir de un archivo de texto similar a requirements.txt.
 
-¿QUÉ HACE?
+El flujo general es:
 
-Este módulo:
-
-1. Lee un archivo de requisitos
-2. Verifica si los paquetes están instalados (y si cumplen versión)
-3. Instala lo necesario usando pip
-4. Importa automáticamente los módulos (con alias opcional)
+1. Leer el archivo de requisitos
+2. Detectar paquetes faltantes o con versión incorrecta
+3. Instalar usando pip
+4. Importar dinámicamente los módulos (con alias opcional)
 
 Todo en tiempo de ejecución.
 
-EJEMPLO DE ARCHIVO requirements.txt
+Instalación
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+pip install git+https://github.com/AnderSantos113/pymporter.git@v0.1
 
-numpy as np >=1.24
-matplotlib as plt
-scipy
-beautifulsoup4 as bs4
-python-dateutil as dateutil >=2.8.0
+Uso básico
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-FORMATO SOPORTADO
+Instalar + importar todo:
+requirements("requirements.txt")
+
+Importación inteligente (lazy):
+importer("requirements.txt")
+
+Solo instalación:
+installer("requirements.txt")
+
+Formato del archivo de requisitos
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Cada línea debe seguir:
 
 package_name [as alias] [operator version]
 
-Ejemplos válidos:
+Donde:
 
+* "as alias" es opcional
+* "operator version" es opcional
+
+Ejemplos válidos
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 numpy
 numpy>=1.20
 numpy as np >=1.20
+scipy
+beautifulsoup4 as bs4
 scikit-learn==1.0.2
 python-dateutil as dateutil >=2.8.0
 
-Operadores soportados:
-
+Operadores de versión
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ==   igual a
 
 > =   mayor o igual
@@ -43,108 +60,77 @@ Operadores soportados:
 > mayor que
 > <    menor que
 
-CASOS ESPECIALES (MUY IMPORTANTE)
+La versión debe ser un string numérico (ej. 1.2.3)
 
+Casos especiales (CRÍTICO)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Algunos paquetes tienen nombres distintos entre pip e import.
 
-## pip install        → import
+## pip name        → import name
 
-beautifulsoup4     → bs4
-Pillow             → PIL
-pyyaml             → yaml
+beautifulsoup4  → bs4
+Pillow          → PIL
+pyyaml          → yaml
 
-En estos casos DEBES usar alias:
+En estos casos ES OBLIGATORIO usar alias:
 
 beautifulsoup4 as bs4
 Pillow as PIL
 pyyaml as yaml
 
-Si no lo haces → ImportError.
+Si no se usa alias → ImportError garantizado.
 
-USO BÁSICO
+Funciones principales
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Instalar + importar todo:
+requirements(file_path, force_reinstall=False, upgrade=False, show_output=True)
 
-requirements("requirements.txt")
+* Instala e importa todo
+* Modo completo
 
-Importación inteligente (lazy):
+importer(file_path)
 
-importer("requirements.txt")
-
-* Solo instala lo que falta
+* Solo instala lo necesario
 * Silencioso
-* Ideal para notebooks o scripts rápidos
+* Ideal para notebooks/scripts
 
-Solo instalar (sin importar):
+installer(file_path, force_reinstall=False, upgrade=False, show_output=True)
 
-installer("requirements.txt")
-
+* Solo instala
+* No importa módulos
 * Útil para setup o CI/CD
 
-OPCIONES AVANZADAS
+Notas de diseño
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-requirements(
-file_path="requirements.txt",
-force_reinstall=False,
-upgrade=False,
-show_output=True
-)
-
-Parámetros:
-
-force_reinstall → reinstala siempre
-upgrade → actualiza paquetes
-show_output → controla logs y warnings
-
-EJEMPLO COMPLETO
-
-from your_module import requirements
-
-requirements("requirements.txt")
-
-# Ya puedes usar directamente:
-
-print(np.array([1, 2, 3]))
-
-DISEÑO
-
-* 100% estándar (sin dependencias externas)
+* 100% Python estándar (sin dependencias externas)
 * Usa importlib, subprocess y warnings
 * dprint basado en warnings (se puede silenciar)
-* Verificación de versiones sin packaging
+* Verificación de versiones simplificada (no PEP 440 completo)
 
-LIMITACIONES
+Limitaciones
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-* No implementa completamente PEP 440
-* Ignora sufijos como rc, dev, etc.
+* No soporta versiones complejas (rc, dev, etc.)
+* No agrupa instalaciones (pip se ejecuta por paquete)
+* No resuelve dependencias entre paquetes
 * Comparación de versiones simplificada
-* No resuelve dependencias complejas
-* No agrupa instalaciones (llama pip por paquete)
-* Requiere alias cuando pip name ≠ import name
 
-NOTAS IMPORTANTES
+Advertencias
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-* alias puede ser:
-
-  * alias real (numpy as np)
-  * nombre real de import (beautifulsoup4 as bs4)
 * Los módulos se inyectan en globals()
-* Puede sobrescribir variables existentes (lanza warning)
+* Un alias puede sobrescribir variables existentes (lanza warning)
+* Se recomienda usar alias explícitos en proyectos grandes
 
-CASOS DE USO
+Caso de uso ideal
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 * Scripts auto-contenidos
 * Notebooks reproducibles
 * Proyectos pequeños sin entorno virtual formal
 * Entornos educativos
 
-FUTURAS MEJORAS
-
-* Soporte para múltiples condiciones (ej: numpy>=1.20,<2.0)
-* Instalación en batch
-* CLI (python -m module requirements.txt)
-* Cache de dependencias
-
-LICENCIA
-
-Libre uso. Modifica, mejora y rompe cosas.
+Autor
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Proyecto desarrollado por Ander Santos

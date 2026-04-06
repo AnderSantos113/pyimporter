@@ -15,11 +15,11 @@ Everything happens at runtime, keeping your workspace flexible.
 
 ## Installation
 
-pip install pyimporter
+pip install pymporter
 
 (Or directly from GitHub for the latest version):
 
-pip install git+[https://github.com/AnderSantos113/pyimporter.git@v1.0.0](https://www.google.com/search?q=https://github.com/AnderSantos113/pyimporter.git%40v1.0.0)
+pip install git+[https://github.com/AnderSantos113/pymporter.git@v1.0.0](https://www.google.com/search?q=https://github.com/AnderSantos113/pymporter.git%40v1.0.0)
 
 ## Basic Usage
 
@@ -59,12 +59,15 @@ pyimporter as pimp : git+[https://github.com/AnderSantos113/pyimporter.git](http
 
 ## Version Operators
 
-\==   equal to
+\==    equal to
 
  \>=   greater than or equal to
-<=   less than or equal to
-/>greater than
-\<    less than
+ 
+ \<=   less than or equal to
+ 
+ \>    greater than
+ 
+ \<    less than
 
 ## Special Cases (The ":" Operator)
 
